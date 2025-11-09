@@ -3,7 +3,7 @@
     <div class="card-body">
       <table class="table table-striped">
         <thead>
-          @if(produits.length>0){
+
           <tr>
             <th>n</th>
             <th>Id</th>
@@ -11,7 +11,7 @@
             <th>Prix</th>
             <th>Date Création</th>
           </tr>
-        }
+        
         </thead>
         @for (produit of produits;track produit.idProduit;let i=$index;let first=$first;let last=$last;let total=$count){
         <tbody>
@@ -24,9 +24,9 @@
             <td>{{produit.idProduit}}</td>
             <td>{{produit.nomProduit}}</td>
             <td>{{produit.prixProduit}}</td>
-            <td>{{produit.dateCreation| date:'dd/mm/yyyy'}}</td>
+            <td>{{produit.dateCreation | date:'dd/MM/yyyy'}}</td>
             <td><a class="btn btn-danger" (click)="supprimerProduit(produit)">Supprimer</a></td>
-            <td><a class="btn btn-success" [routerLink]="['/updateProduit',produit.idProduit]">Modifier</a></td> 
+            <td><a class="btn btn-success" [routerLink]="['/updateProduit',produit.idProduit]">Modifier</a></td>
           </tr>
 
         </tbody>

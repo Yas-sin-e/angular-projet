@@ -1,48 +1,50 @@
 import { Injectable } from '@angular/core';
 import { Produit } from '../model/produits.model';
 import { ThisReceiver } from '@angular/compiler';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+};
 
 @Injectable({
-  providedIn: 'root'// derocateur
+  providedIn: 'root', // derocateur
 })
 export class ProduitService {
-  produits:Produit[];
-  constructor(){
-    this.produits=[
-    {idProduit: 1,nomProduit: "pc asus",prixProduit:3000.600,dateCreation:new Date("02/10/2011")},
-    {idProduit:2,nomProduit:"imprimante epson",prixProduit:450,dateCreation:new Date("5/6/2005")},
-    {idProduit:3,nomProduit:"Tablette samsung ",prixProduit:900.123,dateCreation:new Date("02/20/2026")},
-  ];
-  }
-  listeProduits():Produit[]{
-    return this.produits;
-  }
-  ajouterProduit(produit:Produit){
-    this.produits.push(produit);
-  }
-  supprimerProduit(prod:Produit){
-    // methode 1:
-    //supprimer le produit prod de tableau produits
-    const index=this.produits.indexOf(prod,0);
-    if(index>-1){
-      this.produits.splice(index,1);
-    }
-  }
-  //ou bien
-  /*this.produits.forEach((cur,index)=>{
-    if(prod.idProduit==cur.idProduit){
-      this.produits.splice(index,1);
-    }*/
-   consulterProduit(id:number): Produit{
-return   this.produits.find(p => p.idProduit == id)!;
+  produits!: Produit[];
+  apiURL: string = 'http://localhost:8090/produits/api';
+  constructor(private http: HttpClient) {}
 
-}
-  updateProduit(prod: Produit) {
-    //chercher le produit prod du tableau produits
-    const index = this.produits.indexOf(prod, 0);
-    if (index > -1) {
-      this.produits.splice(index, 1); //supprimer l'ancien éléments
-      this.produits.splice(index, 0, prod); // insérer le nouvel élément
-    }
+  //   this.produits=
+  //   [
+  //   {idProduit: 1,nomProduit: "pc asus",prixProduit:3000.600,dateCreation:new Date("02/10/2011")},
+  //   {idProduit:2,nomProduit:"imprimante epson",prixProduit:450,dateCreation:new Date("5/6/2005")},
+  //   {idProduit:3,nomProduit:"Tablette samsung ",prixProduit:900.123,dateCreation:new Date("02/20/2026")},
+  // ];
+
+  listeProduit(): Observable<Produit[]> {
+    return this.http.get<Produit[]>(this.apiURL);
   }
+  // static
+  // ajouterProduit(produit:Produit){
+  //   this.produits.push(produit);
+  // }
+  // dynamique with api
+  ajouterProduit(prod: Produit): Observable<Produit> {
+    return this.http.post<Produit>(this.apiURL, prod, httpOptions);
+  }
+
+  supprimerProduit(id: number) {
+    const url = `${this.apiURL}/${id}`;
+    return this.http.delete(url, httpOptions);
+  }
+  consulterProduit(id: number): Observable<Produit> {
+    const url = `${this.apiURL}/${id}`;
+    return this.http.get<Produit>(url);
+  }
+modifier(prod :Produit) : Observable<Produit>
+{
+return this.http.put<Produit>(this.apiURL, prod, httpOptions);
+}
 }
